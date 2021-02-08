@@ -5,7 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:e2e": "vue-cli-service test:e2e"
+    "test:e2e": "vue-cli-service test:e2e",
+    "test": "start-server-and-test serve http-get://localhost:8080 cy:run",
+    "cy:run": "cypress run",
+    "cy:ci": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test start https-get://localhost:8080 cy:run"
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -15,6 +18,7 @@
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-e2e-cypress": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "start-server-and-test": "^1.12.0",
     "vue-template-compiler": "^2.6.11"
   }
 }
