@@ -5,11 +5,12 @@ on:
 
 jobs:
   code:
+    name: Test CI
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: set up Node
         uses: actions/setup-node@v1
@@ -17,7 +18,7 @@ jobs:
           node-version: 14
 
       - name: Install dependences
-        run: npm install
+        run: bahmutov/npm-install@v1
 
       - name: Run test
         run: npm run test
