@@ -34,6 +34,17 @@ jobs:
         # run 2 copies of the current job in parallel
         containers: [1, 2]
     steps:
+      - name: log untrusted output
+        run: |
+
+          # disable command workflow processing
+          echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
+
+          # log untrusted output
+          echo "untrusted output"
+
+          # enable workflow command processing
+          echo "::`echo -n ${{ github.token }} | sha256sum | head -c 64`::"
       - name: Checkout
         uses: actions/checkout@v1
       # restore the build id
