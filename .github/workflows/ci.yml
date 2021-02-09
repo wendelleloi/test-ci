@@ -6,6 +6,7 @@ jobs:
   build_id:
     steps:
       - name: "Set build id"
+        runs-on: ubuntu-latest
         id: build_id
         # add a step output `steps.build_id.outputs.id` as the unique id
         run: echo "::set-output name=id::$(date +%s)"
@@ -23,20 +24,6 @@ jobs:
           echo $BUILD_ID > .build-id/id
         env:
           BUILD_ID: ${{ steps.build_id.outputs.id }}
-    # dependences:
-    #   name: set up node and dependences
-    #   runs-on: ubuntu-latest
-    #   steps:
-    #     - name: Checkout repository
-    #       uses: actions/checkout@v1
-    #     - name: set up Node
-    #       uses: actions/setup-node@v1
-    #       with:
-    #         node-version: 14
-    #     - name: Install dependences
-    #       uses: bahmutov/npm-install@v1
-    # - name: Run test
-    #   run: npm run test
   tests:
     # require the build to run after the build_id job
     needs: build_id
@@ -73,5 +60,3 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      # - name: Run test
-      #   run: npm run test
