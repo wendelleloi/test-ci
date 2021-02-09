@@ -4,9 +4,9 @@ on: [pull_request]
 
 jobs:
   build_id:
+    runs-on: ubuntu-latest
     steps:
       - name: "Set build id"
-        runs-on: ubuntu-latest
         id: build_id
         # add a step output `steps.build_id.outputs.id` as the unique id
         run: echo "::set-output name=id::$(date +%s)"
