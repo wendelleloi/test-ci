@@ -1,24 +1,77 @@
 name: CI
 
-on:
-  pull_request:
+on: [pull_request]
 
 jobs:
-  code:
-    name: Test CI
-    runs-on: ubuntu-latest
-
+  build_id:
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: set up Node
-        uses: actions/setup-node@v1
+      - name: "Set build id"
+        id: build_id
+        # add a step output `steps.build_id.outputs.id` as the unique id
+        run: echo "::set-output name=id::$(date +%s)"
+      - name: "Cache .build-id"
+        uses: actions/cache@v1
         with:
-          node-version: 14
-
-      - name: Install dependences
-        uses: bahmutov/npm-install@v1
-
-      - name: Run test
-        run: npm run test
+          # store the build id to github cache
+          path: ${{ github.workspace }}/.build-id
+          # use the build id to generate a completly unique cache
+          key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}-${{ steps.build_id.outputs.id }}
+      - name: "Save build id"
+        # store the build id to a folder that we can later cache.
+        run: |
+          mkdir -p .build-id 
+          echo $BUILD_ID > .build-id/id
+        env:
+          BUILD_ID: ${{ steps.build_id.outputs.id }}
+    # dependences:
+    #   name: set up node and dependences
+    #   runs-on: ubuntu-latest
+    #   steps:
+    #     - name: Checkout repository
+    #       uses: actions/checkout@v1
+    #     - name: set up Node
+    #       uses: actions/setup-node@v1
+    #       with:
+    #         node-version: 14
+    #     - name: Install dependences
+    #       uses: bahmutov/npm-install@v1
+    # - name: Run test
+    #   run: npm run test
+  tests:
+    # require the build to run after the build_id job
+    needs: build_id
+    name: Cypress run
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # run 2 copies of the current job in parallel
+        containers: [1, 2]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      # restore the build id
+      - name: "Cache .build-id"
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/.build-id
+          key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}
+      # set the build id from the restored cache
+      - name: "Set build id"
+        id: build_id
+        run: echo "::set-output name=id::$(cat .build-id/id)"
+      # because of "record" and "parallel" parameters
+      # these containers will load balance all found tests among themselves
+      - name: Cypress run
+        uses: cypress-io/github-action@v1
+        with:
+          record: true
+          parallel: true
+          # use our build id
+          ci-build-id: "${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      # - name: Run test
+      #   run: npm run test

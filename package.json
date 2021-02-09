@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "test:e2e": "vue-cli-service test:e2e",
     "test": "start-server-and-test serve http-get://localhost:8080 cy:run",
-    "cy:run": "cypress run --record --parallel",
+    "cy:run": "cypress run --record --key d29bcc3c-02a1-4eb8-88dc-01d7ce25a9a6 --parallel",
     "cy:ci": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test start https-get://localhost:8080 cy:run"
   },
   "dependencies": {
