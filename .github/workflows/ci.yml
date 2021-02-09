@@ -30,6 +30,7 @@ jobs:
     name: Cypress run
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         # run 2 copies of the current job in parallel
         containers: [1, 2]
@@ -62,7 +63,12 @@ jobs:
       # because of "record" and "parallel" parameters
       # these containers will load balance all found tests among themselves
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          parallel: true
+          start: npm run serve
+        # run: npm run test
         with:
           record: true
           parallel: true
