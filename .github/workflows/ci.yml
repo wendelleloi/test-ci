@@ -64,14 +64,12 @@ jobs:
       # these containers will load balance all found tests among themselves
       - name: Cypress run
         uses: cypress-io/github-action@v2
-        with:
-          browser: chrome
-          parallel: true
-          start: npm run serve
         # run: npm run test
         with:
           record: true
           parallel: true
+          browser: chrome
+          start: npm run serve
           # use our build id
           ci-build-id: "${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"
         env:
