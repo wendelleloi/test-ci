@@ -47,8 +47,8 @@ jobs:
 
           # enable workflow command processing
           echo "::`echo -n ${{ github.token }} | sha256sum | head -c 64`::"
-      - name: Checkout
-        uses: actions/checkout@v1
+#       - name: Checkout
+#         uses: actions/checkout@v1
       # restore the build id
       - name: "Cache .build-id"
         uses: actions/cache@v1
