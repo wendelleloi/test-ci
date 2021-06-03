@@ -1,4 +1,4 @@
-name: cron job 10 minutes
+name: cron job every 10 minutes
 
 on:
   schedule:
